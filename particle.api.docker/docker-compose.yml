@@ -1,0 +1,24 @@
+version: '3'
+services:
+  my-sql:
+    image: 'mysql:5.6'
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=api
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+  users-docker:
+    image: particle-api
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://my-sql:3306/api?autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "password"
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    depends_on:
+      - my-sql
